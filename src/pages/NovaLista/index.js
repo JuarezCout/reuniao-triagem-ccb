@@ -79,7 +79,7 @@ function Home() {
   return (
     <Container>
       <Row>
-        <p className="mt-2 pr-0" style={{ fontSize: '60px' }}>Projeto para Triagem CCB</p>
+        <p className="mt-2 pr-0" style={{ fontSize: '60px' }}>Nova lista</p>
         <p className="pr-0" style={{ fontSize: '30px' }}>Lista para Reuniões Ministeriais da Região</p>
       </Row>
 

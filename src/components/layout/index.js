@@ -3,6 +3,7 @@ import React from "react";
 //# Components
 import Aside from "../Aside";
 import Content from "../Content";
+import Router from "../../router";
 import MainHeader from "../MainHeader";
 
 import { Container } from "./styles";
@@ -12,7 +13,7 @@ const Layout = () => {
     <Container>
       <MainHeader />
       <Aside />
-      <Content />
+      <Router />
     </Container>
   );
 };
