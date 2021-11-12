@@ -14,6 +14,7 @@ export const Header = styled.header`
   display: flex;
   align-items: center;
   height: 100px;
+  margin-top: 5px;
 
   img {
     margin-left: 20px;

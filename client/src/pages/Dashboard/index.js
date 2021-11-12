@@ -1,4 +1,11 @@
-import React, { useState, useRef } from "react"
+//#packages
+import React, { useState, useRef, useEffect } from "react"
+import { Link } from 'react-router-dom'
+
+//# services
+import api from '../../services/api'
+
+//# components
 import Lottie from 'react-lottie'
 import {
   Button,
@@ -13,36 +20,50 @@ import {
 import { AvForm, AvField } from 'availity-reactstrap-validation'
 import { MdSearch, MdPlaylistAdd, MdDeleteSweep, MdContentCopy, MdCloudDownload, MdOutlineEditNote, MdClose } from 'react-icons/md'
 
+//# styles
 import { Container } from "../../styles/HomePage";
 
 import failureAnimation from '../../assets/animations/70780-no-result-found.json'
 import listAnimation from '../../assets/animations/19814-data-list.json'
 
+//# packages
+//# helpers
 
 function Home() {
-  
+
   const [modalSearch, setModalSearch] = useState(false)
   const [modalNewList, setModalNewList] = useState(false)
   const [searchedList, setSearchedList] = useState({})
   const [searchedDate, setSearchedDate] = useState('')
+  const [listHistory, setListHistory] = useState([])
 
-  const monthRef = useRef('')
-  const yearRef = useRef('')
-  const dateRef = useRef('')
 
   const year = (new Date()).getFullYear();
   const years = Array.from(new Array(10), (val, index) => year - index);
 
-  const listHistory = [{ id: 1, date: '01/2021', name: 'Reuniao Trimestral Regional' },
-  { id: 2, date: '02/2021', name: 'Reuniao Ministerial Regional' },
-  { id: 3, date: '03/2021', name: 'Reuniao Trimestral Regional Geral' }]
+  const typeLists = ["Reuniao Trimestral Regional Geral", "Reunião Geral do Ministério Regional", "Reunião Ministerial Local"]
+
+  useEffect(() => {
+    async function getList() {
+      await api.get('/api')
+        .then((response) => {
+          const lists = response.data
+          setListHistory(lists.slice(0, 4))
+        })
+        .catch((error) => {
+          console.log(error)
+        });
+    }
+
+    getList()
+  }, [])
 
   const toggleSearch = () => setModalSearch(!modalSearch)
   const toggleNewList = () => setModalNewList(!modalNewList)
 
   function searchValue(event, values) {
     var selectDate = values.monthSelect + '/' + values.yearSelect
-    setSearchedList(listHistory.find(el => el.date === selectDate && el.name === values.typeSelect))
+    setSearchedList(listHistory.find(el => el.data.substr(el.data.length - 7) === selectDate && el.nome === values.typeSelect))
     toggleSearch()
 
   }
@@ -58,17 +79,23 @@ function Home() {
   }
 
 
-  function handleDownloadList() {
+  function handleDownloadList(id) {
+
+    console.log(id)
 
   }
 
 
-  function handleCopyList() {
+  function handleCopyList(id) {
+
+    console.log(id)
 
   }
 
 
-  function handleDeleteList() {
+  function handleDeleteList(id) {
+
+    console.log(id)
 
   }
 
@@ -84,7 +111,7 @@ function Home() {
       </Row>
 
       <Row>
-        <Col md={9}>
+        <Col md={10}>
           <Row className="mt-4">
             <Col md={9} xs={12}>
               <AvForm onValidSubmit={(event, values) => {
@@ -151,9 +178,9 @@ function Home() {
                     required
                   >
                     <option></option>
-                    <option value="1">Reuniao Ministerial Geral</option>
-                    <option value="Reuniao Ministerial Regional">Reuniao Ministerial Regional</option>
-                    <option value="Reuniao Trimestral Regional Geral">Reuniao Trimestral Regional Geral</option>
+                    {typeLists.map(type => (
+                      <option value={type}>{type}</option>
+                    ))}
                   </AvField>
                   <Button
                     color="secondary"
@@ -162,59 +189,63 @@ function Home() {
                   </Button>
                 </div>
               </AvForm>
+
             </Col>
             <Col style={{ display: 'flex', justifyContent: 'flex-end' }}>
-              <Button className="align-items-center" color="success" onClick={() => toggleNewList()}>
-                Adicionar nova Lista <MdPlaylistAdd className="ml-2" style={{ width: '30px', height: 'auto' }} />
-              </Button>
+
+              <Link style={{ textDecoration: 'none', color: 'black' }} to={{ pathname: "/nova-lista" }}>
+                <Button className="align-items-center" color="success">
+                  Adicionar nova Lista <MdPlaylistAdd className="ml-2" style={{ width: '25px', height: 'auto' }} />
+                </Button>
+              </Link>
             </Col>
           </Row>
 
-          <Row className="mt-5">
+          <Row className="mt-2">
             <div>
               <Table >
                 <thead>
                   <tr>
                     <th style={{ width: '15%' }}>HISTÓRICO</th>
                     <th style={{ width: '50%' }}></th>
-                    <th style={{ width: '25%' }}></th>
+                    <th style={{ width: '30%' }}></th>
                   </tr>
                 </thead>
                 <tbody>
                   {listHistory.map(list => (
                     <tr style={{ marginTop: "15px !important" }}>
                       <td>
-                        {list.date}
+                        {list.data}
                       </td>
                       <td>
-                        <strong>{list.name}</strong>
+                        <strong>{list.nome}</strong>
                       </td>
                       <td>
                         <Button
                           outline color="warning"
                           title="Editar"
-                          onClick={() => handleEditList(list.id)}
+                          onClick={() => handleEditList(list._id)}
                           style={{ marginLeft: '15px' }}>
                           <MdOutlineEditNote className="ml-2" />
                         </Button>
                         <Button
                           outline color="primary"
                           title="Download"
-                          onClick={() => handleDownloadList(list.id)}
+                          onClick={() => handleDownloadList(list._id)}
                           style={{ marginLeft: '15px' }}>
                           <MdCloudDownload className="ml-2" />
                         </Button>
                         <Button
                           outline color="secondary"
                           title="Copiar"
-                          onClick={() => handleCopyList(list.id)}
+                          onClick={() => handleCopyList(list._id)}
                           style={{ marginLeft: '15px' }}>
                           <MdContentCopy className="ml-2" />
                         </Button>
                         <Button
                           outline color="danger"
                           title="Deletar"
-                          onClick={() => handleDeleteList(list.id)}
+                          onClick={() => handleDeleteList(list._id)}
                           style={{ marginLeft: '15px' }}>
                           <MdDeleteSweep className="ml-2" />
                         </Button>
@@ -227,7 +258,7 @@ function Home() {
 
           </Row>
         </Col>
-        <Col md={3} className="p-0">
+        <Col md={2} className="p-0">
 
         </Col>
       </Row>
@@ -280,10 +311,10 @@ function Home() {
                 <tbody>
                   <tr style={{ backgroundColor: "#d4d9e2" }}>
                     <td>
-                      {searchedList.date}
+                      {searchedList.data}
                     </td>
                     <td>
-                      <strong>{searchedList.name}</strong>
+                      <strong>{searchedList.nome}</strong>
                     </td>
                   </tr>
                 </tbody>
@@ -341,9 +372,9 @@ function Home() {
               name="typeNewSelect"
               style={{ marginTop: '50px' }}
             >
-              <option value="Reuniao Ministerial Geral">Reuniao Ministerial Geral</option>
-              <option value="Reuniao Ministerial Regional">Reuniao Ministerial Regional</option>
-              <option value="Reuniao Trimestral Regional Geral">Reuniao Trimestral Regional Geral</option>
+              {typeLists.map(type => (
+                <option value={type}>{type}</option>
+              ))}
             </AvField>
             <Button
               outline color="success"

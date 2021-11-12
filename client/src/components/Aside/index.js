@@ -11,7 +11,7 @@ const Aside = () => {
   return (
     <Container>
       <Header>
-        <img src={logo}/>
+        <img src={logo} alt="COngregação Cristã no Brasil"/>
       </Header>
 
       <MenuContainer>
@@ -19,13 +19,13 @@ const Aside = () => {
           <div class="sidebar-center">
             <ul class="list">
               <Link style={{ textDecoration: 'none', color: 'black' }}>
-                <li class="list-item" component={Link} to='/nova-lista'>
+                <li class="list-item">
                   <i class="list-item-icon fas fa-home"></i>
                   <span class="list-item-text">Início</span>
                 </li>
               </Link>
 
-              <Link style={{ textDecoration: 'none', color: 'black' }}>
+              <Link style={{ textDecoration: 'none', color: 'black' }}  to={{pathname: "/nova-lista"}}>
                 <li class="list-item">
                   <i class="list-item-icon fas fa-th-list"></i>
                   <span class="list-item-text">Adicionar nova lista</span>
