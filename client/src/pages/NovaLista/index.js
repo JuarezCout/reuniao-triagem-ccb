@@ -1,8 +1,10 @@
 //#packages
 import React, { useState, useEffect } from "react"
+import { useDispatch, useSelector } from 'react-redux'
 
 //# services
-import api from '../../services/api'
+import { createList } from "../../actions"
+
 
 //# components
 import Lottie from 'react-lottie'
@@ -27,16 +29,37 @@ function Home() {
   const [localCollapse, setLocalCollapse] = useState(false)
   const [title, setTitle] = useState('')
   const [localValue, setLocalValue] = useState('')
+  const [reload, setReload] = useState(0)
+  const [listData, setListData] = useState({data: "", nome: "", localidades:[]})
 
   const dateMeeting = new Date().toLocaleDateString()
 
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    // async function getList() {
+    //   await api.get('/api')
+    //     .then((response) => {
+    //       setLocalList(response.data)
+    //     })
+    //     .catch((error) => {
+    //       console.log(error)
+    //     });
+    // }
+
+    // getList()
+  }, [reload])
+
   function handleTypeMeeting(values) {
-    setTitle(values.typeNewSelect)
+    setListData({...listData, nome: values.typeNewSelect})
+    setReload(reload + 1)
     toggleType()
   }
 
-  function handleAddLocal(values) {
+  function handleAddLocal(e) {
+    e.preventDefault()
 
+    dispatch(createList(listData))
   }
 
   function handleEditLocal(id) {
@@ -58,7 +81,7 @@ function Home() {
   return (
     <Container>
       <Row>
-        <p className="mt-2 pr-0 title">{title}</p>
+        <p className="mt-2 pr-0 title">{listData.nome}</p>
         <Col md={10} className='subtitle'>
           <Col className="subtext">
             <p className="mt-2 pr-0 subtext">{dateMeeting}</p>

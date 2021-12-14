@@ -3,7 +3,7 @@ import ListaReuniao from '../models/listaReuniao.js'
 
 export const getLists = async (req, res) => {
     try {
-        const lists = await ListaReuniao.findById()        
+        const lists = await ListaReuniao.find() 
         res.status(200).json(lists)
     } catch (error) {
         console.log(error)
